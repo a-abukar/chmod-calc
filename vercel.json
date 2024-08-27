@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/calculate", "destination": "/api/calculate" }
+  ],
+  "builds": [
+    {
+      "src": "api/calculate.js",
+      "use": "@vercel/node"
+    }
+  ]
+}
