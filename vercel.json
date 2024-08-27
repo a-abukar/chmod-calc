@@ -1,11 +1,12 @@
 {
-  "rewrites": [
-    { "source": "/calculate", "destination": "/api/calculate" }
-  ],
+  "version": 2,
   "builds": [
     {
       "src": "api/calculate.js",
       "use": "@vercel/node"
     }
+  ],
+  "routes": [
+    { "src": "/calculate", "dest": "/api/calculate" }
   ]
 }

@@ -1,11 +1,12 @@
 const { spawn } = require('child_process');
+const path = require('path');
 
 module.exports = (req, res) => {
     if (req.method === 'POST') {
         const data = req.body;
         console.log(`Received data: ${JSON.stringify(data)}`);
 
-        const pythonProcess = spawn('python3', ['chmod_calculator.py']);
+        const pythonProcess = spawn('python3', [path.resolve(__dirname, '../chmod_calculator.py')]);
 
         let resultData = '';
         let errorData = '';
