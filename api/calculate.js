@@ -1,44 +1,31 @@
-const { spawn } = require('child_process');
-const path = require('path');
+function calculatePermissions(data) {
+  const owner = (data.owner_read ? 4 : 0) + (data.owner_write ? 2 : 0) + (data.owner_execute ? 1 : 0);
+  const group = (data.group_read ? 4 : 0) + (data.group_write ? 2 : 0) + (data.group_execute ? 1 : 0);
+  const publicPerms = (data.public_read ? 4 : 0) + (data.public_write ? 2 : 0) + (data.public_execute ? 1 : 0);
+
+  const octal = `${owner}${group}${publicPerms}`;
+  const symbolic = `${data.owner_read ? 'r' : '-'}${data.owner_write ? 'w' : '-'}${data.owner_execute ? 'x' : '-'}`
+                + `${data.group_read ? 'r' : '-'}${data.group_write ? 'w' : '-'}${data.group_execute ? 'x' : '-'}`
+                + `${data.public_read ? 'r' : '-'}${data.public_write ? 'w' : '-'}${data.public_execute ? 'x' : '-'}`;
+
+  return { octal, symbolic };
+}
 
 module.exports = (req, res) => {
-    if (req.method === 'POST') {
-        const data = req.body;
-        console.log(`Received data: ${JSON.stringify(data)}`);
+  if (req.method === 'POST') {
+      const data = req.body;
+      console.log(`Received data: ${JSON.stringify(data)}`);
 
-        const pythonProcess = spawn('python3', [path.resolve(__dirname, '../chmod_calculator.py')]);
-
-        let resultData = '';
-        let errorData = '';
-
-        pythonProcess.stdin.write(JSON.stringify(data));
-        pythonProcess.stdin.end();
-
-        pythonProcess.stdout.on('data', (data) => {
-            resultData += data.toString();
-        });
-
-        pythonProcess.stderr.on('data', (data) => {
-            errorData += data.toString();
-        });
-
-        pythonProcess.on('close', (code) => {
-            if (code !== 0) {
-                console.error(`Python process exited with code ${code}`);
-                res.status(500).json({ error: errorData });
-            } else {
-                try {
-                    const resultJson = JSON.parse(resultData);
-                    console.log(`Python stdout: ${resultData}`);
-                    res.setHeader('Content-Type', 'application/json');
-                    res.json(resultJson);
-                } catch (err) {
-                    console.error(`Error parsing JSON: ${err}`);
-                    res.status(500).json({ error: 'Error parsing JSON from Python script' });
-                }
-            }
-        });
-    } else {
-        res.status(405).json({ error: 'Method not allowed' });
-    }
+      try {
+          const result = calculatePermissions(data);
+          console.log(`Result: ${JSON.stringify(result)}`);
+          res.setHeader('Content-Type', 'application/json');
+          res.json(result);
+      } catch (err) {
+          console.error(`Error: ${err}`);
+          res.status(500).json({ error: 'Error calculating permissions' });
+      }
+  } else {
+      res.status(405).json({ error: 'Method not allowed' });
+  }
 };
