@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('Data to be sent:', data);
 
-        fetch('http://localhost:3000/calculate', {
+        fetch('http://localhost:3005/calculate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
