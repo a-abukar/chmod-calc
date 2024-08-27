@@ -11,9 +11,5 @@
   "engines": {
     "node": "20.x"
   },
-  "description": "",
-  "dependencies": {
-    "body-parser": "^1.20.2",
-    "express": "^4.19.2"
-  }
+  "dependencies": {}
 }

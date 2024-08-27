@@ -1,3 +1,5 @@
+// ./api/calculate.js
+
 function calculatePermissions(data) {
   const owner = (data.owner_read ? 4 : 0) + (data.owner_write ? 2 : 0) + (data.owner_execute ? 1 : 0);
   const group = (data.group_read ? 4 : 0) + (data.group_write ? 2 : 0) + (data.group_execute ? 1 : 0);
